@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: esmeetup/elasticsearch:1.7.1
+    container_name: docker.elasticsearch.esmeetup.com
+    tty: true
+    ports:
+      - "9200:9200"
+    expose:
+      - "9200"
+      - "9300"
+    networks:
+      elastic:
+
+  kibana:
+      image: esmeetup/kibana:4.1.6
+      container_name: docker.kibana.esmeetup.com
+      depends_on:
+        - elasticsearch
+      tty: true
+      ports:
+          - "5601:5601"
+      expose:
+          - "5601"
+      networks:
+        elastic:
+
+networks:
+  elastic:
+    external: true
