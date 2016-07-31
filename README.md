@@ -21,6 +21,7 @@ Through examples and demonstrations, the presentation will walk through the conf
 5. Introduce Docker Compose to build a multi-container application with each container reporting statistics to Elasticsearch
 
 6. Discuss the configuration of Elasticsearch, Kibana and Beats as it relates to the Docker hosts and containers
+
 ---
 
 During the presentation several artifacts were used when building images.  These were copied from the ```build/distribution``` sub-directory in each respective ```dockerfiles``` directory.  Due to size, and in some cases license considerations, these files are not include in this repository.  Rather a ```README.md``` is included in the ```build/distribution``` sub-directories indicating the files to include in the directory and the location from which the files can be downloaded.
