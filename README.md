@@ -52,6 +52,10 @@ The following describes the build order and commands used during the presentatio
 ```docker build --tag esmeetup/wordpress:latest .```
 
 ### Docker Compositions
+Prior to deploying the images via ```docker-compose```, three Docker virtual networks need to be created.  From the command line create the following networks:  
+```docker network create elastic```  
+```docker network create database```  
+```docker network create public```
 
 **Elastic stack**  
 ```cd compose/es-kibana```  
