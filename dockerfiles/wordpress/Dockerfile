@@ -1,24 +1,28 @@
 ###################################################################
-# Dockerfile to build instance of Wordpress with Topbeat
-# configured to report process statistics
+# Customized Wordpress to include Topbeat similar to others images
+# produced in this example set.
 ###################################################################
 
-FROM wordpress:latest
+FROM wordpress:php5.6
 
-MAINTAINER Ray Elenteny - Elasticsearch Meetup 07/26/2016
+MAINTAINER Ray Elenteny - Docker Meetup 10/19/2016
 
-COPY build /opt/build/
+COPY build /opt/build
 
-RUN cd / && \
-    cp /opt/build/distribution/topbeat-1.2.3-x86_64.tar.gz . && \
-    tar zxvf topbeat-1.2.3-x86_64.tar.gz && \
-    rm topbeat-1.2.3-x86_64.tar.gz && \
-    cd /topbeat-1.2.3-x86_64 && \
-    sed -i 's/system: true/system: false/' topbeat.yml && \
-    sed -i 's/localhost:9200/docker.elasticsearch.esmeetup.com:9200/' topbeat.yml && \
+RUN apt-get update && \
+    apt-get -y install netcat dnsutils && \
 
-    cp /opt/build/startup/entrypoint.sh /entrypoint.sh && \
-    chmod +x /entrypoint.sh && \
+    mv /opt/build/opt/docker-utils /opt && \
 
-    cd /var/www/html && \
+    cd /opt/docker-utils && \
+    tar zxvf /opt/build/distribution/topbeat-1.3.1-x86_64.tar.gz && \
+    mv topbeat-1.3.1-x86_64 topbeat-1.3.1 && \
+    mv /opt/build/topbeat/topbeat.yml /opt/docker-utils/topbeat-1.3.1 && \
+    
+    chmod +x /opt/docker-utils/bin/*.sh && \
+
+    mv /opt/build/usr/local/bin/docker-entrypoint.sh /usr/local/bin/ && \
+    chmod +x /usr/local/bin/docker-entrypoint.sh && \
+
     rm -rf /opt/build
+

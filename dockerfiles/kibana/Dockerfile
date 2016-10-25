@@ -1,38 +1,32 @@
 ######################################################################
 # Dockerfile to build instance of Kibana configured with Beats
-# dashboards
+# dashboards and Marvel
 ######################################################################
 
-FROM esmeetup/centos:7.07262016
+FROM meetup/ubuntu:16.04
 
-MAINTAINER Ray Elenteny - Elasticsearch Meetup 07/26/2016
+MAINTAINER Ray Elenteny - Docker Meetup 10/19/2016
 
-COPY build /opt/build/
+COPY build /opt/build
 
-USER root
-RUN adduser kibana && echo "kibana:kibana416" | chpasswd && \
-    echo "kibana    ALL=(ALL)    NOPASSWD: ALL" >> /etc/sudoers.d/kibana && \
+RUN apt-get update && \
+    apt-get install -y curl && \
+
+    adduser --disabled-password --gecos "" kibana && \
 
     cd /home/kibana && \
-    tar zxvf /opt/build/distribution/kibana-4.1.6-linux-x64.tar.gz && \
-    mv kibana-4.1.6-linux-x64 kibana-4.1.6 && \
+    tar zxvf /opt/build/distribution/kibana-4.6.1-linux-x86_64.tar.gz && \
+    mv kibana-4.6.1-linux-x86_64 kibana-4.6.1 && \
 
-    cd kibana-4.1.6/config && \
-    sed -i 's/localhost/docker.elasticsearch.esmeetup.com/' kibana.yml && \
-    sed -i '/# startup_timeout:/a startup_timeout: 120000' kibana.yml && \
-
-    mkdir /home/kibana/bin && \
-    cd /home/kibana/bin && \
-
-    cp /opt/build/distribution/beats-dashboards-1.2.3.zip . && \
-    cp /opt/build/distribution/topbeat-1.2.3-x86_64.tar.gz . && \
-    cp /opt/build/startup/* /home/kibana/bin && \
-
-    rm -rf /opt/build && \
+    cp -r /opt/build/home/kibana/. /home/kibana && \
     chmod +x /home/kibana/bin/*.sh && \
-    chown -R kibana.kibana /home/kibana
+    cp /opt/build/distribution/beats-dashboards-1.3.1.zip /home/kibana/bin && \
+    cp /opt/build/distribution/marvel-2.4.1.tar.gz /home/kibana/bin && \
+    chown -R kibana.kibana /home/kibana && \
 
+    rm -rf /opt/build
+
+EXPOSE 5601
 WORKDIR /home/kibana
-
 USER kibana
-ENTRYPOINT /home/kibana/bin/start-kibana.sh
+CMD /home/kibana/bin/start-kibana.sh
